@@ -1,0 +1,181 @@
+<div class="employee">
+  <div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3>Employee Management</h3>
+      <button class="btn btn-primary" (click)="openModel()">
+        Add Employee
+      </button>
+    </div>
+
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="mb-3 text-primary">Employee List</h5>
+
+        <table class="table table-hover align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th>Sr No</th>
+              <th>ID</th>
+              <th>NAME</th>
+              <th>EMAIL</th>
+              <th>CONTACT</th>
+              <th>Department</th>
+              <th>ROLE</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of employeeList ; track $index) {
+            <tr>
+              <td>{{ $index + 1 }}</td>
+              <td>{{ item.employeeId }}</td>
+              <td>{{ item.employeeName }}</td>
+              <td>{{ item.emailId }}</td>
+              <td>{{ item.contactNo }}</td>
+              <td>{{ item.deptName }}</td>
+              <td>{{ item.role }}</td>
+
+              <td style="white-space: nowrap">
+                <button
+                  (click)="updateEmployee()"
+                  class="btn btn-sm btn-info me-1"
+                >
+                  Edit
+                </button>
+                <button
+                  (click)="onDeleteEmployee(item.employeeId)"
+                  class="btn btn-sm btn-danger"
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div
+    #newModel
+    class="modal"
+    style="
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      border: 1px solid #ccc;
+      z-index: 1000;
+      max-width: 1000px;
+      width: 70%;
+      height: 70%;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+    "
+  >
+    <div class="modal-header">
+      <h5 class="modal-title">Add New Employee</h5>
+      <button type="button" (click)="closeModel()" class="btn-close"></button>
+    </div>
+
+    <div class="modal-body">
+      <form>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Employee Name</label>
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="employeeObj.employeeName"
+              name="employeeName"
+              required
+            />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Contact Number</label>
+            <input
+              [(ngModel)]="employeeObj.contactNo"
+              type="text"
+              class="form-control"
+              name="contactNo"
+              required
+            />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Email ID</label>
+            <input
+              type="email"
+              [(ngModel)]="employeeObj.emailId"
+              class="form-control"
+              name="emailId"
+              required
+            />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Password</label>
+            <input
+              type="password"
+              [(ngModel)]="employeeObj.password"
+              class="form-control"
+              name="password"
+              required
+            />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Department</label>
+            <select
+              [(ngModel)]="employeeObj.deptId"
+              class="form-select"
+              name="deptId"
+            >
+              <option disabled selected>Select Department</option>
+              @for (items of depList$|async; track $index) {
+              <option [value]="items.deptId">{{ items.deptName }}</option>
+              }
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Gender</label>
+            <select
+              [(ngModel)]="employeeObj.gender"
+              class="form-select"
+              name="gender"
+            >
+              <option disabled selected>Select Gender</option>
+
+              <option>Male</option>
+              <option>Female</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Role</label>
+            <select
+              [(ngModel)]="employeeObj.role"
+              class="form-select"
+              name="role"
+            >
+              <option disabled selected>Select Role</option>
+              <option>Select Role</option>
+              @for (item of roleList$|async; track $index) {
+              <option>{{ item }}</option>
+              }
+            </select>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" (click)="closeModel()" class="btn btn-secondary">
+        Cancel
+      </button>
+      <button type="button" (click)="onSaveEmp()" class="btn btn-primary">
+        Save
+      </button>
+    </div>
+  </div>
+</div>

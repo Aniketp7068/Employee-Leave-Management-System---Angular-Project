@@ -1,0 +1,263 @@
+<div class="container mt-4">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Leave Management</h2>
+    <button (click)="openModel()" class="btn btn-primary" id="addLeaveBtn">
+      + Add Leave Request
+    </button>
+  </div>
+
+  <!-- Tabs -->
+  <ul class="nav nav-tabs mb-4" id="leaveTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button
+        [ngClass]="currentTabName == 'myLeave' ? 'active' : ''"
+        class="nav-link active"
+        id="all-tab"
+        (click)="ChangeTab('myLeave')"
+        type="button"
+        role="tab"
+      >
+        My leaves
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button
+        [ngClass]="currentTabName == 'leaveRequest' ? 'active' : ''"
+        class="nav-link"
+        id="pending-tab"
+        (click)="ChangeTab('leaveRequest')"
+        type="button"
+        role="tab"
+      >
+        Leaves Request
+      </button>
+    </li>
+  </ul>
+
+  <!-- Leave Requests Table -->
+  <div class="tab-content" id="leaveTabContent">
+    @if (currentTabName == 'myLeave') {
+    <div class="tab-pane fade show active" id="all " role="tabpanel">
+      <div class="card shadow">
+        <div class="card-header">
+          <h6 class="m-0 font-weight-bold text-primary">My Leaves Request</h6>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead class="table-dark">
+                <tr>
+                  <th>Leave ID</th>
+                  <th>Employee</th>
+                  <th>Leave Type</th>
+                  <th>From Date</th>
+                  <th>To Date</th>
+                  <th>Days</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of leaveList; track $index) {
+                <tr>
+                  <td>{{ $index }}</td>
+                  <td>{{ item.employeeName }}</td>
+                  <td>{{ item.leaveType }}</td>
+                  <td>{{ item.fromDate | date : "dd-MMM-yy" }}</td>
+                  <td>{{ item.toDate | date : "dd-MMM-yyyy" }}</td>
+                  <td>{{ item.noOfDays }}</td>
+                  <td>
+                    @if (item.isApproved == null) {
+                    <span class="badge bg-warning">Pending</span>
+                    }@else if (item.isApproved == true) {
+                    <span class="badge bg-success">Approved</span>
+                    }@else if (item.isApproved == false) {
+                    <span class="badge bg-danger">Rejected</span>
+                    }
+                  </td>
+                  <td>
+                    <button class="btn btn-sm btn-info">
+                      <i class="bi bi-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-success">
+                      <i class="bi bi-check"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger">
+                      <i class="bi bi-x"></i>
+                    </button>
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    } @else {
+    <div class="tab-pane fade show active" id="pending " role="tabpanel">
+      <div class="card shadow">
+        <div class="card-header">
+          <h6 class="m-0 font-weight-bold text-primary">Pending</h6>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead class="table-dark">
+                <tr>
+                  <th>Leave ID</th>
+                  <th>Employee</th>
+                  <th>Leave Type</th>
+                  <th>From Date</th>
+                  <th>To Date</th>
+                  <th>Days</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of approvalLeaveList; track $index) {
+                <tr>
+                  <td>{{ $index }}</td>
+                  <td>{{ item.employeeName }}</td>
+                  <td>{{ item.leaveType }}</td>
+                  <td>{{ item.fromDate | date : "dd-MMM-yy" }}</td>
+                  <td>{{ item.toDate | date : "dd-MMM-yyyy" }}</td>
+                  <td>{{ item.noOfDays }}</td>
+                  <td>
+                    @if (item.isApproved == null) {
+                    <span class="badge bg-warning">Pending</span>
+                    }@else if (item.isApproved == true) {
+                    <span class="badge bg-success">Approved</span>
+                    }@else if (item.isApproved == false) {
+                    <span class="badge bg-danger">Rejected</span>
+                    }
+                  </td>
+                  <td>
+                    <button
+                      class="btn btn-sm btn-success me-1"
+                      (click)="approveLeave(item.leaveId)"
+                    >
+                      <i class="fas fa-check"></i> Approve
+                    </button>
+                    <button
+                      class="btn btn-sm btn-danger me-1"
+                      (click)="rejectLeave(item.leaveId)"
+                    >
+                      <i class="fas fa-times"></i> Reject
+                    </button>
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+
+  <!-- Model -->
+
+  <div class="modal" #newModal id="addLeaveModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Add Leave Request</h4>
+          <button
+            class="btn-close"
+            (click)="closeModel()"
+            data-bs-dismiss="modal"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="leaveForm">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="leaveType" class="form-label">Leave Type</label>
+                  <select
+                    formControlName="leaveType"
+                    class="form-select"
+                    id="leaveType"
+                    required
+                  >
+                    <option value="">Select Leave Type</option>
+                    <option value="sick leave">Sick Leave</option>
+                    <option value="Annual leave">Annual Leave</option>
+                    <option value="Personal leave">Personal Leave</option>
+                    <option value="Maternity leave">Maternity Leave</option>
+                    <option value="Emergency leave">Emergency Leave</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="fromDate" class="form-label">From Date</label>
+                  <input
+                    type="date"
+                    id="fromDate"
+                    formControlName="toDate"
+                    class="form-control"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="toDate" class="form-label">To Date</label>
+                  <input
+                    type="date"
+                    formControlName="fromDate"
+                    id="toDate"
+                    class="form-control"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="noOfDays" class="form-label">Number of Days</label>
+              <input
+                type="number"
+                id="noOfDays"
+                formControlName="noOfDays"
+                class="form-control"
+                required
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="details" class="form-label">Details/Reason</label>
+              <textarea
+                class="form-control"
+                id="details"
+                formControlName="details"
+                rows="3"
+                required
+              ></textarea>
+            </div>
+          </form>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button type="button" (click)="onSave()" class="btn btn-success">
+              Submit Request
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,33 @@
+.sidebar {
+  width: 250px;
+  background: linear-gradient(180deg, #6a11cb, #2575fc);
+  color: white;
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+
+.sidebar .nav-link {
+  color: #f8f9fa;
+  font-size: 16px;
+  padding: 10px 15px;
+}
+
+.sidebar .nav-link.active,
+.sidebar .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+}
+
+.sidebar .dropdown-menu {
+  background: #343a40;
+  color: white;
+}
+
+.sidebar .dropdown-menu .dropdown-item {
+  color: white;
+}
+
+.sidebar .dropdown-menu .dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
